@@ -118,6 +118,80 @@ main,
   max-width: 760px;
 }
 
+.longform {
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 5rem 0;
+}
+
+.longform-header {
+  padding-bottom: 2rem;
+}
+
+.longform .hero-text {
+  max-width: 760px;
+}
+
+.article-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1.4rem;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.article-meta span {
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.article-figure {
+  margin: 0 0 3rem;
+}
+
+.article-figure img {
+  width: 100%;
+  display: block;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.article-figure figcaption {
+  margin-top: 0.75rem;
+  color: var(--muted);
+  font-size: 0.94rem;
+}
+
+.longform section {
+  padding: 2rem 0;
+  border-top: 1px solid var(--rule);
+}
+
+.longform h2 {
+  margin-bottom: 1rem;
+  font-size: clamp(1.75rem, 3vw, 2.4rem);
+}
+
+.longform p,
+.longform li {
+  color: var(--muted);
+  font-size: 1.06rem;
+}
+
+.longform a {
+  color: var(--accent-dark);
+  font-weight: 800;
+}
+
+.longform li + li {
+  margin-top: 0.5rem;
+}
+
 .eyebrow {
   margin: 0 0 0.7rem;
   color: var(--accent-dark);
@@ -311,6 +385,11 @@ h3 {
   gap: 0.45rem;
 }
 
+.feature-card {
+  border-color: rgba(15, 118, 110, 0.35);
+  background: linear-gradient(180deg, #ffffff, #eef7f5);
+}
+
 .repo-toolbar {
   margin: -0.6rem 0 1.3rem;
   color: var(--muted);
@@ -484,6 +563,10 @@ h3 {
 
   h1 {
     font-size: 3rem;
+  }
+
+  .longform {
+    padding: 3.5rem 0;
   }
 }
 

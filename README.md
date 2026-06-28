@@ -6,11 +6,14 @@ Static academic portfolio site for GitHub Pages, built from the CV.
 
 - `index.html` - main website page
 - `articles.html` - separate articles and research writing page
+- `cis-bwe-chaos-informed-speech-bandwidth-extension.html` - CIS-BWE explainer article
 - `repositories.html` - live GitHub repositories page
 - `updates.html` - career and research updates feed page
 - `updates.json` - editable career feed data
+- `medium-drafts/cis-bwe-chaos-informed-speech-bandwidth-extension.md` - Medium-ready CIS-BWE draft
 - `style.css` - website styling
 - `assets/site.js` - live repository loader and updates feed renderer
+- `assets/cis-bwe-poster.jpg` - article hero image rendered from the ACL 2026 poster
 - `assets/profile-photo-edited.jpg` - edited profile photo used on the homepage
 - `assets/profile-photo-edited.png` - full-quality edited profile photo source
 - `assets/prof_pic.png` - previous profile photo
