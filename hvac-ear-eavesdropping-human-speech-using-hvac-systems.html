@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="A readable explainer of HVAC-EAR, an ICASSP 2026 paper on reconstructing speech from HVAC pressure sensor data." />
+  <meta name="author" content="Tarikul Islam Tamiti" />
+  <meta property="og:title" content="When Buildings Accidentally Listen" />
+  <meta property="og:description" content="A readable breakdown of HVAC-EAR: Eavesdropping Human Speech Using HVAC Systems." />
+  <meta property="og:type" content="article" />
+  <meta property="og:image" content="assets/hvac-ear-poster-hero.jpg" />
+  <title>When Buildings Accidentally Listen - Tarikul Islam Tamiti</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <nav class="nav" aria-label="Primary navigation">
+      <a class="brand" href="index.html#top" aria-label="Tarikul Islam Tamiti home">TT</a>
+      <div class="nav-links">
+        <a href="index.html#research">Research</a>
+        <a href="index.html#publications">Publications</a>
+        <a href="articles.html" aria-current="page">Articles</a>
+        <a href="repositories.html">Repositories</a>
+        <a href="updates.html">Updates</a>
+        <a href="index.html#contact">Contact</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+    <article class="longform">
+      <header class="longform-header">
+        <p class="eyebrow">HVAC-EAR Explainer</p>
+        <h1>When Buildings Accidentally Listen</h1>
+        <p class="hero-text">
+          A 15-minute breakdown of our ICASSP 2026 work, HVAC-EAR: Eavesdropping Human Speech Using HVAC Systems.
+        </p>
+        <div class="article-meta">
+          <span>Tarikul Islam Tamiti</span>
+          <span>ICASSP 2026</span>
+          <span>Cyber-Physical Security</span>
+        </div>
+      </header>
+
+      <figure class="article-figure">
+        <img src="assets/hvac-ear-poster-hero.jpg" alt="HVAC-EAR poster overview" />
+        <figcaption>HVAC-EAR studies whether pressure sensors already present in HVAC systems can leak intelligible speech.</figcaption>
+      </figure>
+
+      <section>
+        <h2>The short version</h2>
+        <p>
+          Modern buildings are full of sensors. Some of them measure temperature, some measure motion, and some measure pressure so the HVAC system can regulate airflow. HVAC-EAR asks an uncomfortable question: can pressure sensors inside building infrastructure accidentally capture enough acoustic information to reconstruct human speech?
+        </p>
+        <p>
+          Our answer is yes, under realistic constraints. Differential pressure sensors used in HVAC systems are sensitive to pressure changes, and speech is also pressure variation in air. HVAC-EAR shows that low-resolution, noisy pressure data can be transformed into intelligible speech using a complex-valued neural network that reconstructs both magnitude and phase.
+        </p>
+      </section>
+
+      <figure class="article-figure">
+        <img src="assets/hvac-ear-attack-model.jpg" alt="HVAC-EAR attack model and pressure sensor structure" />
+        <figcaption>Segment 1: differential pressure sensors can be near occupants, connected to building systems, and sensitive to acoustic pressure.</figcaption>
+      </figure>
+
+      <section>
+        <h2>Why HVAC pressure sensors are surprising</h2>
+        <p>
+          Differential pressure sensors are normal components in Heating, Ventilation, and Air Conditioning systems. They help monitor pressure differences for filter health, duct static pressure, variable air volume control, and pressure balancing between rooms.
+        </p>
+        <p>
+          The privacy issue appears because these sensors often operate in pressure ranges that overlap with human speech pressure, and their sampling rates can reach the 0.5 to 2 kHz range. That does not capture full speech bandwidth, but it can capture enough low-frequency structure to make reconstruction possible.
+        </p>
+      </section>
+
+      <section>
+        <h2>The threat model</h2>
+        <p>
+          HVAC-EAR does not assume that an attacker installs a microphone in the room. The concern is subtler: pressure sensor data may already be available through Building Management Systems, logs, OPC servers, vendor dashboards, rooftop units, or maintenance interfaces.
+        </p>
+        <p>
+          In real facilities, pressure ports can be located near entrances, corridors, diffusers, and other places close to occupants. That proximity turns a benign control sensor into a possible side channel.
+        </p>
+      </section>
+
+      <figure class="article-figure">
+        <img src="assets/hvac-ear-methodology.jpg" alt="HVAC-EAR complex-valued architecture and CUAB methodology" />
+        <figcaption>Segment 2: HVAC-EAR uses a complex-valued U-Net, complex conformer bottleneck, and Complex Unified Attention Blocks.</figcaption>
+      </figure>
+
+      <section>
+        <h2>The model: reconstructing what the sensor never meant to hear</h2>
+        <p>
+          HVAC-EAR treats the pressure signal as a low-resolution, noisy, aliased version of speech. The model first converts it into a complex time-frequency spectrogram and then reconstructs a cleaner, higher-bandwidth signal.
+        </p>
+        <p>
+          The architecture uses complex-valued encoders and decoders, complex skip blocks, and a complex conformer in the bottleneck. This matters because pressure data is not just missing magnitude information; transient HVAC noise also corrupts phase. Reconstructing both magnitude and phase is crucial for intelligibility.
+        </p>
+        <div class="algorithm-box" aria-label="HVAC-EAR reconstruction algorithm">
+          <code>Algorithm 1: HVAC-EAR End-to-End Speech Reconstruction
+Input:
+  p(t): differential pressure sensor waveform
+  f_out = 8 kHz: target speech sampling rate
+Output:
+  y_hat(t): reconstructed speech waveform
+
+1. Collect pressure waveform p(t) from the HVAC differential pressure channel.
+2. Standardize clip length and resample the pressure signal for the target setup
+   (500 Hz, 1 kHz, or 2 kHz input reconstructed toward 8 kHz speech).
+3. Compute the complex STFT:
+   S_in = S_real + j * S_imag.
+4. Pass S_in through eight complex encoder blocks:
+   complex convolution, complex batch normalization, and complex activation.
+5. Store encoder features and process them through complex skip blocks.
+6. Insert Complex Unified Attention Blocks after selected encoders to model
+   long-range time and frequency dependencies.
+7. Send the bottleneck representation through a complex conformer module.
+8. Decode with eight complex decoder blocks, using skip features from the encoder.
+9. Estimate the clean complex spectrogram S_hat.
+10. Train with complex multi-resolution STFT loss over multiple FFT resolutions,
+    comparing real and imaginary components across resolutions.
+11. Apply inverse STFT to S_hat and return reconstructed speech y_hat(t).</code>
+        </div>
+      </section>
+
+      <section>
+        <h2>CUAB: attention across time and frequency</h2>
+        <p>
+          The Complex Unified Attention Block, or CUAB, is designed to capture relationships along both time and frequency axes in a complex spectrogram. Time-axis attention helps model inter-phoneme dependencies. Frequency-axis attention helps model harmonic structure.
+        </p>
+        <p>
+          This is important because low-resolution pressure data lacks the rich spectral detail that normal speech enhancement models expect. CUAB gives the model a way to reason globally about what information should be restored.
+        </p>
+        <div class="algorithm-box" aria-label="CUAB algorithm">
+          <code>Algorithm 2: Complex Unified Attention Block (CUAB)
+Input:
+  E: complex encoder feature map with channel, frequency, and time axes
+Output:
+  E_att: attention-enhanced complex feature map
+
+1. Split E into real and imaginary components.
+2. Build a time-attention branch:
+   2.1 Reshape features to emphasize time-axis structure.
+   2.2 Apply complex projection and fully connected layers along time.
+   2.3 Produce a time attention map A_t.
+3. Build a frequency-attention branch:
+   3.1 Reshape features to emphasize frequency-axis structure.
+   3.2 Apply complex projection and fully connected layers along frequency.
+   3.3 Produce a frequency attention map A_f.
+4. Reweight encoder features with A_t and A_f.
+5. Concatenate the attended time and frequency features.
+6. Fuse them with complex convolution, normalization, and activation.
+7. Return E_att.</code>
+        </div>
+      </section>
+
+      <figure class="article-figure">
+        <img src="assets/hvac-ear-data-collection.jpg" alt="HVAC-EAR data collection and evaluation tables" />
+        <figcaption>Segment 3: real-world and testbed data collection used commercial pressure sensors and volunteer speech recordings.</figcaption>
+      </figure>
+
+      <section>
+        <h2>How we evaluated it</h2>
+        <p>
+          The study includes a real-world FDA-compliant cleanroom setting and a controlled testbed built with the same type of commercial differential pressure sensor, vinyl tubes, and pressure pickup device. The dataset includes 30 volunteers and 900 minutes of pressure data paired with ground-truth audio.
+        </p>
+        <p>
+          The evaluation tests reconstruction from 500 Hz, 1 kHz, and 2 kHz pressure data upsampled to 8 kHz. We use five metrics: Log Spectral Distance, NISQA-MOS, SI-SDR, PESQ, and STOI.
+        </p>
+      </section>
+
+      <figure class="article-figure">
+        <img src="assets/hvac-ear-results.jpg" alt="HVAC-EAR reconstructed speech and result discussion" />
+        <figcaption>Segment 4: HVAC-EAR improves noisy pressure data and reconstructs intelligible speech from low sampling rates.</figcaption>
+      </figure>
+
+      <section>
+        <h2>What the results show</h2>
+        <p>
+          HVAC-EAR outperforms bandwidth-extension baselines such as NU-Wave, AP-BWE, and AERO on pressure sensor data. For 500 Hz to 8 kHz reconstruction, HVAC-EAR achieves stronger performance across the reported metrics, including LSD, NISQA-MOS, SI-SDR, PESQ, and STOI.
+        </p>
+        <p>
+          One practical example from the poster shows reconstruction from noisy pressure data with transient HVAC noise: the signal improves from 3.5 dB SNR to 12 dB SNR after reconstruction. That matters because HVAC environments are not quiet audio labs. They include vibration, shocks, turbulence, and other transient noise.
+        </p>
+      </section>
+
+      <figure class="article-figure">
+        <img src="assets/hvac-ear-spectrogram-reconstruction.png" alt="Ground truth speech, raw pressure sensor data, and reconstructed speech spectrograms" />
+        <figcaption>The spectrogram comparison shows the core challenge: raw pressure data is extremely low bandwidth, but the reconstructed output restores much richer speech structure.</figcaption>
+      </figure>
+
+      <section>
+        <h2>What listeners heard</h2>
+        <p>
+          A subjective evaluation with 10 listeners found that reconstructed speech had much higher perceptual quality than raw pressure data. The paper also studies distance from the pressure sensor. The system remains reliable up to about 1.2 meters, after which intelligibility degrades sharply.
+        </p>
+      </section>
+
+      <figure class="article-figure">
+        <img src="assets/hvac-ear-limitations-conclusion.jpg" alt="HVAC-EAR MOS, distance impact, limitations, and conclusion" />
+        <figcaption>Segment 5: the strongest privacy risk appears within roughly 1.2 m, with limitations below 500 Hz and outside the tested English dataset.</figcaption>
+      </figure>
+
+      <section>
+        <h2>Why this matters</h2>
+        <p>
+          The key lesson is not that HVAC systems are microphones. They are not. The lesson is that cyber-physical sensors can leak information from physical processes they were never designed to observe.
+        </p>
+        <p>
+          In sensitive spaces such as cleanrooms, hospitals, laboratories, offices, and campuses, pressure data may be treated as harmless operational telemetry. HVAC-EAR shows that this assumption needs to be revisited.
+        </p>
+      </section>
+
+      <section>
+        <h2>Limitations</h2>
+        <p>
+          HVAC-EAR has important boundaries. The current evaluation uses English speech, performance degrades beyond about 1.2 m, and reconstruction becomes unreliable when the pressure sensor sampling rate falls below 500 Hz.
+        </p>
+        <p>
+          Those limitations are important for responsible interpretation. The contribution is not a claim that every HVAC sensor can reveal every conversation. It is evidence that a real and previously underexplored privacy channel exists.
+        </p>
+      </section>
+
+      <section>
+        <h2>Read more</h2>
+        <ul>
+          <li><a href="https://arxiv.org/abs/2510.01082">HVAC-EAR on arXiv</a></li>
+          <li><a href="articles.html">More research articles</a></li>
+          <li><a href="index.html#contact">Contact me</a></li>
+        </ul>
+      </section>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <p>Copyright <span id="year"></span> Tarikul Islam Tamiti. Built for GitHub Pages.</p>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

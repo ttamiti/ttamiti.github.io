@@ -85,16 +85,72 @@
         </ul>
       </section>
 
+      <figure class="article-figure">
+        <img src="assets/cis-bwe-discriminator-and-mos.png" alt="Chaos-informed discriminator pipeline with MRLD, recurrence discriminator, and MOS summary" />
+        <figcaption>The supplied discriminator figure summarizes the chaos-critic idea visually: multi-resolution nonlinear features are converted into compact adversarial feedback for the generator.</figcaption>
+      </figure>
+
       <section>
         <h2>MRLD: listening for rapid chaos</h2>
         <p>MRLD uses Lyapunov exponents. A Lyapunov exponent measures how quickly nearby trajectories in a dynamical system diverge. In speech, that gives us a way to ask whether the generated waveform has realistic sensitivity and nonlinear fluctuation patterns.</p>
         <p>MRLD slices the waveform into five window sizes: 64, 128, 256, 512, and 1024 samples. For each scale, it computes local Lyapunov-style features and feeds them to lightweight single-resolution discriminator blocks designed with depthwise separable convolutions. The result is a critic that focuses on fast chaotic details without becoming parameter-heavy.</p>
+        <div class="algorithm-box" aria-label="MRLD algorithm">
+          <code>Algorithm 1: Multi-Resolution Lyapunov Discriminator (MRLD)
+Input:
+  x: real or reconstructed waveform
+  W = {64, 128, 256, 512, 1024}: window sizes
+  d: delay-embedding dimension
+  tau: embedding delay
+  Delta: divergence horizon
+Output:
+  D_MRLD(x): real/fake discriminator score
+
+1. Initialize feature list F = [].
+2. For each window size w in W:
+   2.1 Split x into non-overlapping segments of length w.
+   2.2 For each segment s:
+       a. Build delay-embedded vectors y_j = [s_j, s_{j+tau}, ..., s_{j+(d-1)tau}].
+       b. For each y_j, find its nearest neighbor y'_j outside the Theiler window.
+       c. Estimate local divergence:
+          lambda_j = (1 / Delta) * log((||y_{j+Delta} - y'_{j+Delta}|| + eps) /
+                                      (||y_j - y'_j|| + eps)).
+       d. Average lambda_j values to form a Lyapunov feature for segment s.
+   2.3 Reshape all segment features at scale w into a feature map.
+   2.4 Append the feature map to F.
+3. Normalize and reshape each feature map in F.
+4. Feed each resolution map into its single-resolution discriminator block.
+5. Concatenate or aggregate the block outputs.
+6. Return the final real/fake score D_MRLD(x).</code>
+        </div>
       </section>
 
       <section>
         <h2>MSDFA: listening for fractal timing</h2>
         <p>MSDFA uses detrended fluctuation analysis. Instead of looking only at short-term waveform shape, it asks how fluctuations grow across several time scales. That helps capture self-similar structure across syllabic, phonemic, and sub-phonemic regions.</p>
         <p>The model computes DFA features at five scales: 100, 200, 300, 500, and 600 samples. Those features become maps that are judged by compact discriminator blocks. This gives the generator feedback about long-range temporal structure, which helps reduce muffled prosody by capturing long-term dependencies.</p>
+        <div class="algorithm-box" aria-label="MSDFA algorithm">
+          <code>Algorithm 2: Multi-Scale Detrended Fluctuation Analysis Discriminator (MSDFA)
+Input:
+  x: real or reconstructed waveform
+  N = {100, 200, 300, 500, 600}: DFA scales
+Output:
+  D_MSDFA(x): real/fake discriminator score
+
+1. Compute the integrated profile Y(k) = sum_{i=1}^{k}(x_i - mean(x)).
+2. Initialize feature list F = [].
+3. For each scale n in N:
+   3.1 Split Y into non-overlapping windows of length n.
+   3.2 For each window:
+       a. Fit a local trend with least-squares regression.
+       b. Subtract the trend to obtain detrended residuals.
+       c. Compute the root-mean-square fluctuation F_n.
+   3.3 Aggregate F_n values across windows.
+   3.4 Tile or reshape the scale feature into a fixed-size map.
+   3.5 Append the map to F.
+4. Stack all scale maps into a multi-scale tensor.
+5. Feed the tensor through the MSDFA discriminator block.
+6. Return the final real/fake score D_MSDFA(x).</code>
+        </div>
       </section>
 
       <section>
@@ -109,6 +165,11 @@
         <p>On the VCTK 4 kHz to 16 kHz setup, CIS-BWE reaching 4.24 NISQA-MOS compared with 3.86 for the baseline AP-BWE, 0.95 LSD compared with 0.96, and 13.5 percent WER compared with 13.7 percent. CIS-BWE also reduces overall parameters from 72M to 33.5M and runs faster at inference.</p>
         <p>The most important efficiency result is on the discriminator side: MRLD plus MSDFA use about 483K parameters compared with roughly 22M for MPD, a 40x reduction. In other words, the chaos critics are not just more targeted; they are also much smaller making them computationally feasible.</p>
       </section>
+
+      <figure class="article-figure">
+        <img src="assets/cis-bwe-subjective-results.png" alt="CIS-BWE mean opinion score and pair preference test results" />
+        <figcaption>Subjective listening results show that the proposed chaos-informed model improves perceived quality and is preferred more often than the comparison systems.</figcaption>
+      </figure>
 
       <section>
         <h2>Why this matters beyond one benchmark</h2>

@@ -7,13 +7,18 @@ Static academic portfolio site for GitHub Pages, built from the CV.
 - `index.html` - main website page
 - `articles.html` - separate articles and research writing page
 - `cis-bwe-chaos-informed-speech-bandwidth-extension.html` - CIS-BWE explainer article
+- `hvac-ear-eavesdropping-human-speech-using-hvac-systems.html` - HVAC-EAR explainer article
 - `repositories.html` - live GitHub repositories page
 - `updates.html` - career and research updates feed page
 - `updates.json` - editable career feed data
 - `medium-drafts/cis-bwe-chaos-informed-speech-bandwidth-extension.md` - Medium-ready CIS-BWE draft
+- `medium-drafts/hvac-ear-eavesdropping-human-speech-using-hvac-systems.md` - Medium-ready HVAC-EAR draft
 - `style.css` - website styling
 - `assets/site.js` - live repository loader and updates feed renderer
 - `assets/cis-bwe-poster.jpg` - article hero image rendered from the ACL 2026 poster
+- `assets/cis-bwe-*.png` - CIS-BWE architecture and subjective-result figures for the article
+- `assets/hvac-ear-*.jpg` - segmented HVAC-EAR poster panels for the article
+- `assets/hvac-ear-spectrogram-reconstruction.png` - HVAC-EAR spectrogram reconstruction figure
 - `assets/profile-photo-edited.jpg` - edited profile photo used on the homepage
 - `assets/profile-photo-edited.png` - full-quality edited profile photo source
 - `assets/prof_pic.png` - previous profile photo
