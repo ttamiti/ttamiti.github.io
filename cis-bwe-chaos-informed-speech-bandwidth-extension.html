@@ -52,8 +52,8 @@
 
       <section>
         <h2>The short version</h2>
-        <p>When speech is compressed, downsampled, transmitted over narrowband channels, or captured through constrained sensors, the high-frequency details are often missing. Those details are not decorative. They carry cues for clarity, speaker identity, sharp consonants, vocal fry, creaky voice, and other subtle dynamics that make speech sound alive.</p>
-        <p>CIS-BWE is our attempt to reconstruct those missing details more faithfully. The central idea is simple: speech is not only spectral, it is also nonlinear. Human speech is produced by airflow interacting with a deformable vocal tract, which creates deterministic chaotic structure. If a model only learns magnitude, phase, or ordinary periodicity, it can still miss the chaotic signatures that make reconstructed speech feel natural.</p>
+        <p>When speech is compressed, downsampled, transmitted over narrowband channels, or captured through constrained sensors, the high-frequency details are often missing. Those details are not decorative. They carry perceptual cues for clarity, speaker identity, sharp consonants, vocal fry, creaky voice, and other subtle dynamics that make speech sound more natural.</p>
+        <p>CIS-BWE framework is our attempt to reconstruct those high-frequency missing details more faithfully. The central idea is simple: speech is not only spectral, but it is also deterministically nonlinear. Human speech is produced by airflow interacting with a deformable vocal tract, which creates deterministic chaotic structure. If a model only learns magnitude, phase, or ordinary periodicity, it can still miss the chaotic signatures that make reconstructed speech feel natural.</p>
       </section>
 
       <section>
@@ -64,7 +64,7 @@
 
       <section>
         <h2>What current methods miss</h2>
-        <p>Many bandwidth extension systems focus heavily on magnitude spectrograms. Some newer approaches also model phase, which is important because phase affects waveform realism and perceptual quality. But even magnitude-plus-phase systems can produce speech that is too smooth, too dull, or slightly muffled.</p>
+        <p>Most bandwidth extension systems focus heavily on magnitude spectrograms. Some newer approaches also model the phase, which is important because the phase affects waveform realism and perceptual quality. But even magnitude-plus-phase systems can produce speech that is too smooth, too dull, or slightly muffled.</p>
         <p>Our diagnosis is that common discriminators are not looking for the right kind of structure. They can judge waveforms, spectrogram slices, amplitudes, and phase patterns, but they do not explicitly ask whether the generated speech contains the nonlinear chaotic behavior of real speech production.</p>
       </section>
 
@@ -76,7 +76,7 @@
 
       <section>
         <h2>CIS-BWE in one picture</h2>
-        <p>The model has two main parts. First, a dual-stream generator processes magnitude and phase in parallel. Second, four discriminators judge the reconstructed speech: two standard amplitude/phase critics and two new chaos-informed critics.</p>
+        <p>The model has two main parts. First, a dual-stream generator processes magnitude and phase in parallel with Lattice Net style information exchange. Second, four discriminators judge the reconstructed speech: two standard amplitude/phase critics and two new chaos-informed critics.</p>
         <ul>
           <li><strong>MRLD</strong>: Multi-Resolution Lyapunov Discriminator, designed to capture rapid nonlinear chaotic fluctuations.</li>
           <li><strong>MSDFA</strong>: Multi-Scale Detrended Fluctuation Analysis Discriminator, designed to capture fractal-like long-range temporal correlations.</li>
@@ -88,13 +88,13 @@
       <section>
         <h2>MRLD: listening for rapid chaos</h2>
         <p>MRLD uses Lyapunov exponents. A Lyapunov exponent measures how quickly nearby trajectories in a dynamical system diverge. In speech, that gives us a way to ask whether the generated waveform has realistic sensitivity and nonlinear fluctuation patterns.</p>
-        <p>MRLD slices the waveform into five window sizes: 64, 128, 256, 512, and 1024 samples. For each scale, it computes local Lyapunov-style features and feeds them to lightweight single-resolution discriminator blocks. The result is a critic that focuses on fast chaotic details without becoming parameter-heavy.</p>
+        <p>MRLD slices the waveform into five window sizes: 64, 128, 256, 512, and 1024 samples. For each scale, it computes local Lyapunov-style features and feeds them to lightweight single-resolution discriminator blocks designed with depthwise separable convolutions. The result is a critic that focuses on fast chaotic details without becoming parameter-heavy.</p>
       </section>
 
       <section>
         <h2>MSDFA: listening for fractal timing</h2>
         <p>MSDFA uses detrended fluctuation analysis. Instead of looking only at short-term waveform shape, it asks how fluctuations grow across several time scales. That helps capture self-similar structure across syllabic, phonemic, and sub-phonemic regions.</p>
-        <p>The model computes DFA features at five scales: 100, 200, 300, 500, and 600 samples. Those features become maps that are judged by compact discriminator blocks. This gives the generator feedback about long-range temporal structure, which helps reduce muffled prosody.</p>
+        <p>The model computes DFA features at five scales: 100, 200, 300, 500, and 600 samples. Those features become maps that are judged by compact discriminator blocks. This gives the generator feedback about long-range temporal structure, which helps reduce muffled prosody by capturing long-term dependencies.</p>
       </section>
 
       <section>
@@ -106,8 +106,8 @@
       <section>
         <h2>What changed in the results</h2>
         <p>We evaluated CIS-BWE on English VCTK and French MLS speech, including clean and noisy settings. The evaluation spans objective metrics such as LSD, PESQ, STOI, SI-SDR, SI-SNR, NISQA-MOS, and WER, plus subjective listening tests.</p>
-        <p>On the VCTK 4 kHz to 16 kHz setup, the poster headline numbers show CIS-BWE reaching 4.24 NISQA-MOS compared with 3.86 for AP-BWE, 0.95 LSD compared with 0.96, and 13.5 percent WER compared with 13.7 percent. CIS-BWE also reduces overall parameters from 72M to 33.5M and runs faster at inference.</p>
-        <p>The most important efficiency result is on the discriminator side: MRLD plus MSDFA use about 483K parameters compared with roughly 22M for MPD, a 40x reduction. In other words, the chaos critics are not just more targeted; they are also much smaller.</p>
+        <p>On the VCTK 4 kHz to 16 kHz setup, CIS-BWE reaching 4.24 NISQA-MOS compared with 3.86 for the baseline AP-BWE, 0.95 LSD compared with 0.96, and 13.5 percent WER compared with 13.7 percent. CIS-BWE also reduces overall parameters from 72M to 33.5M and runs faster at inference.</p>
+        <p>The most important efficiency result is on the discriminator side: MRLD plus MSDFA use about 483K parameters compared with roughly 22M for MPD, a 40x reduction. In other words, the chaos critics are not just more targeted; they are also much smaller making them computationally feasible.</p>
       </section>
 
       <section>
@@ -118,7 +118,7 @@
 
       <section>
         <h2>Limitations</h2>
-        <p>The chaos features improve the training signal, but Lyapunov estimation adds training overhead. Inference speed is not affected because the chaos features are discriminator-only, but future work should explore more efficient approximations for chaos-aware training.</p>
+        <p>The chaos features improve the training signal, but Lyapunov estimation adds training overhead. Inference speed is not affected because the chaos features are discriminator-only, but future work should explore more efficient and faster approximations for chaos-aware training.</p>
         <p>We also want to test whether the same idea helps related speech tasks such as text-to-speech, automatic speech recognition, and sensor-based audio reconstruction.</p>
       </section>
 
@@ -134,7 +134,7 @@
   </main>
 
   <footer class="site-footer">
-    <p>Copyright <span id="year"></span> Tarikul Islam Tamiti. Built for GitHub Pages.</p>
+    <p>Copyright <span id="year"></span> Tarikul Islam Tamiti.</p>
   </footer>
 
   <script>
