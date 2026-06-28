@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="GitHub repositories by Tarikul Islam Tamiti." />
+  <meta name="author" content="Tarikul Islam Tamiti" />
+  <meta property="og:title" content="Repositories - Tarikul Islam Tamiti" />
+  <meta property="og:description" content="Public GitHub repositories and code projects by Tarikul Islam Tamiti." />
+  <meta property="og:type" content="website" />
+  <title>Repositories - Tarikul Islam Tamiti</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <nav class="nav" aria-label="Primary navigation">
+      <a class="brand" href="index.html#top" aria-label="Tarikul Islam Tamiti home">TT</a>
+      <div class="nav-links">
+        <a href="index.html#research">Research</a>
+        <a href="index.html#publications">Publications</a>
+        <a href="articles.html">Articles</a>
+        <a href="repositories.html" aria-current="page">Repositories</a>
+        <a href="updates.html">Updates</a>
+        <a href="index.html#experience">Experience</a>
+        <a href="index.html#education">Education</a>
+        <a href="index.html#contact">Contact</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="page-hero">
+      <p class="eyebrow">Code</p>
+      <h1>GitHub Repositories</h1>
+      <p class="hero-text">
+        Public repositories from my GitHub profile, loaded live from GitHub when the page opens.
+      </p>
+      <div class="hero-actions">
+        <a class="button" href="https://github.com/ttamiti">GitHub Profile</a>
+        <a class="button secondary" href="index.html">Back to Home</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-heading">
+        <p class="eyebrow">Projects</p>
+        <h2>Public code</h2>
+      </div>
+      <div class="repo-toolbar">
+        <p id="repo-status">Loading repositories from GitHub...</p>
+      </div>
+      <div class="repo-grid" id="repo-list" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Copyright <span id="year"></span> Tarikul Islam Tamiti. Built for GitHub Pages.</p>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+  <script src="assets/site.js"></script>
+</body>
+</html>

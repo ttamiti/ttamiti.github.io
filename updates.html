@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Career and research updates from Tarikul Islam Tamiti." />
+  <meta name="author" content="Tarikul Islam Tamiti" />
+  <meta property="og:title" content="Updates - Tarikul Islam Tamiti" />
+  <meta property="og:description" content="Career, research, publication, and teaching updates from Tarikul Islam Tamiti." />
+  <meta property="og:type" content="website" />
+  <title>Updates - Tarikul Islam Tamiti</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <nav class="nav" aria-label="Primary navigation">
+      <a class="brand" href="index.html#top" aria-label="Tarikul Islam Tamiti home">TT</a>
+      <div class="nav-links">
+        <a href="index.html#research">Research</a>
+        <a href="index.html#publications">Publications</a>
+        <a href="articles.html">Articles</a>
+        <a href="repositories.html">Repositories</a>
+        <a href="updates.html" aria-current="page">Updates</a>
+        <a href="index.html#experience">Experience</a>
+        <a href="index.html#education">Education</a>
+        <a href="index.html#contact">Contact</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="page-hero">
+      <p class="eyebrow">Career Feed</p>
+      <h1>Updates</h1>
+      <p class="hero-text">
+        Research, publication, teaching, education, and career updates. This feed is powered by
+        <code>updates.json</code>, so new items can be added without editing page markup.
+      </p>
+      <div class="hero-actions">
+        <a class="button" href="index.html">Back to Home</a>
+        <a class="button secondary" href="repositories.html">GitHub Repos</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-heading">
+        <p class="eyebrow">Timeline</p>
+        <h2>Latest updates</h2>
+      </div>
+      <div class="feed-list" id="updates-feed" aria-live="polite">
+        <article class="status-card">
+          <p>Loading updates...</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Copyright <span id="year"></span> Tarikul Islam Tamiti. Built for GitHub Pages.</p>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+  <script src="assets/site.js"></script>
+</body>
+</html>

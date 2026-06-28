@@ -1,0 +1,29 @@
+[
+  {
+    "date": "2026-05-19",
+    "type": "GMU Feature",
+    "title": "Work featured in GMU Cyber Security Engineering story",
+    "summary": "GMU's Department of Cyber Security Engineering featured the chaos-informed speech reconstruction work behind CIS-BWE in \"Chaos theory finds its voice.\"",
+    "url": "https://cybersecurity.gmu.edu/news/2026-05/chaos-theory-finds-its-voice"
+  },
+  {
+    "date": "2026-03-17",
+    "type": "GMU Feature",
+    "title": "Research featured by Volgenau School of Engineering",
+    "summary": "GMU's Volgenau School of Engineering featured related generative AI and signal reconstruction work in \"Staying ahead of the current.\"",
+    "url": "https://volgenau.gmu.edu/news/2026-03/staying-ahead-current"
+  },
+  {
+    "date": "2026-06-28",
+    "type": "Publication",
+    "title": "CIS-BWE accepted to ACL 2026",
+    "summary": "CIS-BWE: Chaos-Informed Speech Bandwidth Extension was accepted to ACL 2026.",
+    "url": "https://arxiv.org/abs/2507.15970"
+  },
+  {
+    "date": "2026-06-28",
+    "type": "Education",
+    "title": "Expected M.S. milestone in Fall 2026",
+    "summary": "Expected to receive the master's milestone in the INFT PhD program at George Mason University in Fall 2026."
+  }
+]
